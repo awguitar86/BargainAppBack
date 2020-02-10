@@ -3,7 +3,10 @@ const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require ('mongoose')
-const mongodbConnectionString = process.env.MONGODB
+const mongoUsername = process.env.MONGO_USERNAME
+const mongoPassword = process.env.MONGO_PASSWORD
+const mongoHostname = process.env.MONGO_HOSTNAME
+const mongoDB = process.env.MONGO_DB
 const cors = require('cors')
 const multer = require('multer')
 const port = process.env.PORT || 8080
@@ -53,7 +56,12 @@ app.use((err, req, res, next) => {
 })
 
 mongoose
-  .connect(mongodbConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(
+    `mongodb+srv://${mongoUsername}:${mongoPassword}@${mongoHostname}/${mongoDB}?retryWrites=true&w=majority`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+  })
   .then(result => {
     app.listen(port, () => console.log(`================================\nServer is listening on port ${port}\n================================`))
   })
