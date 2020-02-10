@@ -26,7 +26,7 @@ const itemSchema = new Schema({
       type: Number,
       required: true
     },
-    firmOnPrice: {
+    isFirmOnPrice: {
       type: Boolean,
       required: true
     },
