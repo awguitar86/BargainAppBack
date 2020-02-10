@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
 })
 
 mongoose
-  .connect(mongodbConnectionString, { useNewUrlParser: true })
+  .connect(mongodbConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(result => {
     app.listen(port, () => console.log(`================================\nServer is listening on port ${port}\n================================`))
   })
