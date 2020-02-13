@@ -12,6 +12,7 @@ const multer = require('multer')
 const port = process.env.PORT || 8080
 
 const feedRoutes = require('./routes/feed')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 
@@ -46,6 +47,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')))
 app.use(cors())
 
 app.use('/feed', feedRoutes)
+app.use('/auth', authRoutes)
 
 app.use((err, req, res, next) => {
   console.log(err)
