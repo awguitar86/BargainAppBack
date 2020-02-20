@@ -1,17 +1,18 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const carSchema = new Schema({
+const imageSchema = new Schema({ body: String });
+
+const carSchema = new Schema(
+  {
     title: {
       type: String,
       required: true
     },
-    imageUrls: [
-      {
-        type: String,
-        required: true
-      }
-    ],
+    imageUrls: {
+      type: [imageSchema],
+      required: true
+    },
     description: {
       type: String,
       required: true
@@ -37,7 +38,7 @@ const carSchema = new Schema({
       required: true
     },
     vin: {
-      type: Number,
+      type: String,
       required: true
     },
     titleType: {
@@ -93,7 +94,8 @@ const carSchema = new Schema({
       ref: 'User',
       required: true
     }
-  }, { timestamps: true}
-)
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Car', carSchema)
+module.exports = mongoose.model('Car', carSchema);
