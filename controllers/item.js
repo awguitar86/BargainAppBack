@@ -6,7 +6,7 @@ const User = require('../models/user')
 
 exports.getItems = (req, res, next) => {
   const currentPage = req.query.currentPage
-  const perPage = 36
+  const perPage = 24
   let totalItems
   Item
     .find()
@@ -34,6 +34,44 @@ exports.getItems = (req, res, next) => {
     })
 }
 
+exports.getItem = (req, res, next) => {
+  const itemId = req.params.itemId
+  Item.findById(itemId)
+    .then(item => {
+      if(!item) {
+        const error = new Error('Could not find item')
+        error.statusCode = 404
+        throw error
+      }
+      res.status(200).json({message: 'Item fetched.', item: item})
+    })
+    .catch(err => {
+      if(!err.statusCode) {
+        err.statusCode = 500
+      }
+      next(err)
+    })
+}
+
+exports.getUserItems = (req, res, next) => {
+  const userId = req.params.userId
+  Item.find({creator: userId})
+    .then(items => {
+      if(!items) {
+        const error = new Error('Could not find user items')
+        error.statusCode = 404
+        throw error
+      }
+      res.status(200).json({message: 'Items fetched.', items: items})
+    })
+    .catch(err => {
+      if(!err.statusCode) {
+        err.statusCode = 500
+      }
+      next(err)
+    })
+}
+
 exports.createItem = (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()) {
@@ -41,13 +79,13 @@ exports.createItem = (req, res, next) => {
     error.statusCode = 422
     throw error
   }
-  if(!req.file) {
-    const error = new Error('No image provided!')
+  if(req.files.length <= 0) {
+    const error = new Error('You must select at least 1 image.')
     error.statusCode = 422
     throw error
   }
-  const imageUrl = req.file.path
   const title = req.body.title
+  const imageUrls = req.files
   const category = req.body.category
   const condition = req.body.condition
   const description = req.body.description
@@ -57,7 +95,7 @@ exports.createItem = (req, res, next) => {
   let creator
   const item = new Item({
     title: title,
-    imageUrl: imageUrl,
+    imageUrls: imageUrls,
     category: category,
     condition: condition,
     description: description,
@@ -86,24 +124,8 @@ exports.createItem = (req, res, next) => {
       if(!err.statusCode) {
         err.statusCode = 500
       }
-      next(err)
-    })
-}
-
-exports.getItem = (req, res, next) => {
-  const itemId = req.params.itemId
-  Item.findById(itemId)
-    .then(item => {
-      if(!item) {
-        const error = new Error('Could not find item')
-        error.statusCode = 404
-        throw error
-      }
-      res.status(200).json({message: 'Item fetched.', item: item})
-    })
-    .catch(err => {
-      if(!err.statusCode) {
-        err.statusCode = 500
+      if(err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.send('Too many images to upload')
       }
       next(err)
     })
@@ -117,7 +139,7 @@ exports.updateItem = (req, res, next) => {
     error.statusCode = 422
     throw error
   }
-  const imageUrl = req.file.path
+  const imageUrls = req.files
   const title = req.body.title
   const category = req.body.category
   const condition = req.body.condition
@@ -125,8 +147,8 @@ exports.updateItem = (req, res, next) => {
   const price = req.body.price
   const isFirmOnPrice = req.body.isFirmOnPrice
   const location = req.body.location
-  if(!imageUrl) {
-    const error = new Error('No file picked')
+  if(imageUrl.length <= 0) {
+    const error = new Error('You have to select at least 1 image.')
     error.statusCode = 422
     throw error
   }
@@ -142,8 +164,18 @@ exports.updateItem = (req, res, next) => {
         error.statusCode = 403
         throw error
       }
-      if(imageUrl !== item.imageUrl) {
-        clearImage(item.imageUrl)
+      if(imageUrls.length >= item.imageUrls.length) {
+        for(let i = 0; i < imageUrls.length; i++) {
+          if(imageUrls[i] !== item.imageUrls[i]) {
+            clearImage(item.imageUrls[i])
+          }
+        }
+      } else {
+        for(let i = 0; i < item.imageUrls.length; i++) {
+          if(item.imageUrls[i] !== imageUrls[i]) {
+            clearImage(imageUrls[i])
+          }
+        }
       }
       item.title = title
       item.imageUrl = imageUrl
@@ -156,11 +188,14 @@ exports.updateItem = (req, res, next) => {
       return item.save()
     })
     .then(result => {
-      res.status(200).json({message: 'Item updated', item: result})
+      res.status(200).json({message: 'Item updated successfully!', item: result})
     })
     .catch(err => {
       if(!err.statusCode) {
         err.statusCode = 500
+      }
+      if(err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.send('Too many images to upload')
       }
       next(err)
     })
@@ -180,7 +215,9 @@ exports.deleteItem = (req, res, next) => {
         error.statusCode = 403
         throw error
       }
-      clearImage(item.imageUrl)
+      for(let imgUrl of item.imageUrls) {
+        clearImage(imgUrl)
+      }
       return Item.findByIdAndRemove(itemId)
     })
     .then(result => {

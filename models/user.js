@@ -19,6 +19,12 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Item'
     }
+  ],
+  cars: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Car'
+    }
   ]
 })
 

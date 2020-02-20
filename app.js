@@ -11,7 +11,8 @@ const cors = require('cors')
 const multer = require('multer')
 const port = process.env.PORT || 8080
 
-const feedRoutes = require('./routes/feed')
+const itemRoutes = require('./routes/item')
+const carRoutes = require('./routes/car')
 const authRoutes = require('./routes/auth')
 
 const app = express()
@@ -21,7 +22,7 @@ const fileStorage = multer.diskStorage({
     cb(null, 'images')
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname)
+    cb(null, `${Date.now()}-${file.originalname}`)
   }
 })
 
@@ -41,12 +42,13 @@ app.use(bodyParser.json())
 app.use(multer({
   storage: fileStorage,
   fileFilter: fileFilter})
-  .single('image'))
+  .array('images', 5))
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
 app.use(cors())
 
-app.use('/feed', feedRoutes)
+app.use('/items', itemRoutes)
+app.use('/cars', carRoutes)
 app.use('/auth', authRoutes)
 
 app.use((err, req, res, next) => {
