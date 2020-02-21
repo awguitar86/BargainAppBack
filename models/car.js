@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const imageSchema = new Schema({ body: String });
+// const imageSchema = new Schema({ body: String });
 
 const carSchema = new Schema(
   {
@@ -10,7 +10,7 @@ const carSchema = new Schema(
       required: true
     },
     imageUrls: {
-      type: [imageSchema],
+      type: [String],
       required: true
     },
     description: {

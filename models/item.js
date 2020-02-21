@@ -1,17 +1,16 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const itemSchema = new Schema({
+const itemSchema = new Schema(
+  {
     title: {
       type: String,
       required: true
     },
-    imageUrls: [
-      {
-        type: String,
-        required: true
-      }
-    ],
+    imageUrls: {
+      type: [String],
+      required: true
+    },
     category: {
       type: String,
       required: true
@@ -41,7 +40,8 @@ const itemSchema = new Schema({
       ref: 'User',
       required: true
     }
-  }, { timestamps: true}
-)
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Item', itemSchema)
+module.exports = mongoose.model('Item', itemSchema);
