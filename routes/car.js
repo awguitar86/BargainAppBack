@@ -1,20 +1,20 @@
-const express = require('express')
+const express = require('express');
 
-const carController = require('../controllers/car')
-const isAuth = require('../middleware/is-auth')
+const carController = require('../controllers/car');
+const isAuth = require('../middleware/is-auth');
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', carController.getCars)
+router.get('/', carController.getCars);
 
-router.get('/:carId', carController.getCar)
+router.get('/:carId', carController.getCar);
 
-router.get('/:userId', isAuth, carController.getUserCars)
+router.get('/user-cars/:userId', isAuth, carController.getUserCars);
 
-router.post('/', isAuth, carController.createCar)
+router.post('/', isAuth, carController.createCar);
 
-router.put('/:carId', isAuth, carController.updateCar)
+router.put('/:carId', isAuth, carController.updateCar);
 
-router.delete('/:carId', isAuth, carController.deleteCar)
+router.delete('/:carId', isAuth, carController.deleteCar);
 
-module.exports = router
+module.exports = router;
