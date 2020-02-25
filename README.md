@@ -2,13 +2,21 @@
 
 To use this API, clone this repo and then do
 
-`npm install`
+```
+npm install
+```
 
 to install all the depenedencies.
 
 Then create a .env file in the root directory and copy this code replacing the MONGO variables with your mongodb credentials:
 
-`MONGO_USERNAME=mongodb-username\ MONGO_PASSWORD=mongodb-password\ MONGO_HOSTNAME=mongodb-hostname\ MONGO_DB=mongodb-database-name PORT=8080`
+```
+MONGO_USERNAME=mongodb-username
+MONGO_PASSWORD=mongodb-password
+MONGO_HOSTNAME=mongodb-hostname
+MONGO_DB=mongodb-database-name
+PORT=8080
+```
 
 ### REST Endpoints
 
@@ -19,12 +27,16 @@ The first thing you want to do to use the API is create a user, because to creat
 PUT /auth/signup\
 To signup all you need is an email, password, and name field
 
-`{ email: email@email.com, password: yourspecialpassword, name: John Hancock }`
+```
+{ email: email@email.com, password: yourspecialpassword, name: John Hancock }
+```
 
 POST /auth/login\
 To login you just need your email and password you signed up with.
 
-`{ email: email@email.com, password: yourspecialpassword }`
+```
+{ email: email@email.com, password: yourspecialpassword }
+```
 
 #### Cars
 
