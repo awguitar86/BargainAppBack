@@ -1,4 +1,4 @@
-## Bargain App Back End
+# Bargain App Back End
 
 To use this API, clone this repo and then do
 
@@ -18,11 +18,11 @@ MONGO_DB=mongodb-database-name
 PORT=8080
 ```
 
-### REST Endpoints
+## REST Endpoints
 
 The first thing you want to do to use the API is create a user, because to create, edit or delete a car or item you have to be signed in as a user.
 
-#### User
+### User
 
 PUT /auth/signup\
 To signup all you need is an email, password, and name field
@@ -38,7 +38,7 @@ To login you just need your email and password you signed up with.
 { email: email@email.com, password: yourspecialpassword }
 ```
 
-#### Cars
+### Cars
 
 GET /cars\
 This endpoint gets all cars in the database. No auth needed.
@@ -110,7 +110,7 @@ Update a car in the database. Requires Auth. User needs to be logged in.
 DELETE /cars/:carId\
 Deletes one car from the database. Requires Auth. User needs to be logged in.
 
-#### Items
+### Items
 
 GET /items\
 Gets all items in the database. Does not require auth.
