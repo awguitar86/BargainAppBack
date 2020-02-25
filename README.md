@@ -1,3 +1,7 @@
 ## Bargain App Back End
 
-This is the start of the Bargain app back end built using Node, Express and MongoDB with Mongoose.
+To use this API, clone this repo and then do
+
+`npm install`
+
+to install all the depenedencies.
