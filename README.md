@@ -8,7 +8,7 @@ to install all the depenedencies.
 
 Then create a .env file in the root directory and copy this code replacing the MONGO variables with your mongodb credentials:
 
-`MONGO_USERNAME=mongodb-username MONGO_PASSWORD=mongodb-password MONGO_HOSTNAME=mongodb-hostname MONGO_DB=mongodb-database-name PORT=8080`
+`MONGO_USERNAME=mongodb-username\ MONGO_PASSWORD=mongodb-password\ MONGO_HOSTNAME=mongodb-hostname\ MONGO_DB=mongodb-database-name PORT=8080`
 
 ### REST Endpoints
 
