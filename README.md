@@ -16,20 +16,26 @@ The first thing you want to do to use the API is create a user, because to creat
 
 #### User
 
-PUT /auth/signup
+PUT /auth/signup\
 To signup all you need is an email, password, and name field
+
 `{ email: email@email.com, password: yourspecialpassword, name: John Hancock }`
 
-POST /auth/login
+POST /auth/login\
 To login you just need your email and password you signed up with.
+
 `{ email: email@email.com, password: yourspecialpassword }`
 
 #### Cars
 
-GET /cars
+GET /cars\
 This endpoint gets all cars in the database. No auth needed.
 
-GET /cars/:carId
-If you know the car id, this is how you get that single car. Just need the car id in the endpoint url.
+GET /cars/:carId\
+If you know the car id, this is how you get that single car. Just need the car id in the endpoint url. No auth needed.
 
-GET /cars/:userId
+GET /cars/user-cars/:userId\
+This is used to get all the cars from the user who posted the cars. This requires auth. Must login to use it.
+
+POST /cars/\
+To post a new car to sell, it requires a lot of data.
