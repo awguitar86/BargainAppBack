@@ -1,12 +1,13 @@
 # Bargain App Back End
 
-To use this API, clone this repo and then do
+To use this API with your own database, clone this repo and then do
 
 ```
+cd BargainAppBack
 npm install
 ```
 
-to install all the depenedencies.
+to install all the dependencies.
 
 Then create a .env file in the root directory and copy this code replacing the MONGO variables with your mongodb credentials:
 
