@@ -2,28 +2,27 @@ const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
 const Car = require('../models/car');
-const User = require('../models/user');
 
 exports.getCars = (req, res, next) => {
   const currentPage = req.query.currentPage;
-  const perPage = 24;
+  const perPage = 25;
   let totalCars;
   Car.find()
     .countDocuments()
-    .then(count => {
+    .then((count) => {
       totalCars = count;
       return Car.find()
         .skip((currentPage - 1) * perPage)
         .limit(perPage);
     })
-    .then(cars => {
+    .then((cars) => {
       res.status(200).json({
         message: 'Fetched Cars successfully!',
         cars: cars,
-        totalCars: totalCars
+        totalCars: totalCars,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -31,10 +30,10 @@ exports.getCars = (req, res, next) => {
     });
 };
 
-exports.getCar = (req, res, next) => {
+exports.getCarById = (req, res, next) => {
   const carId = req.params.carId;
   Car.findById(carId)
-    .then(car => {
+    .then((car) => {
       if (!car) {
         const error = new Error('Could not find car');
         error.statusCode = 404;
@@ -42,7 +41,7 @@ exports.getCar = (req, res, next) => {
       }
       res.status(200).json({ message: 'Car fetched successfully!', car: car });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -50,12 +49,12 @@ exports.getCar = (req, res, next) => {
     });
 };
 
-exports.getUserCars = (req, res, next) => {
-  const userId = req.params.userId;
-  Car.find({ creator: userId })
-    .then(cars => {
+exports.getCarByMake = (req, res, next) => {
+  const carMake = req.params.carMake;
+  Car.find({ make: carMake })
+    .then((cars) => {
       if (!cars) {
-        const error = new Error('Could not find user cars');
+        const error = new Error('Could not find cars for that make');
         error.statusCode = 404;
         throw error;
       }
@@ -63,13 +62,34 @@ exports.getUserCars = (req, res, next) => {
         .status(200)
         .json({ message: 'Cars fetched Successfully!', cars: cars });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
       next(err);
     });
 };
+
+// exports.getUserCars = (req, res, next) => {
+//   const userId = req.params.userId;
+//   Car.find({ creator: userId })
+//     .then(cars => {
+//       if (!cars) {
+//         const error = new Error('Could not find user cars');
+//         error.statusCode = 404;
+//         throw error;
+//       }
+//       res
+//         .status(200)
+//         .json({ message: 'Cars fetched Successfully!', cars: cars });
+//     })
+//     .catch(err => {
+//       if (!err.statusCode) {
+//         err.statusCode = 500;
+//       }
+//       next(err);
+//     });
+// };
 
 exports.createCar = (req, res, next) => {
   const imgUrls = [];
@@ -108,7 +128,8 @@ exports.createCar = (req, res, next) => {
   const isFirmOnPrice = req.body.isFirmOnPrice;
   const location = req.body.location;
   const sellerType = req.body.sellerType;
-  let creator;
+  const sellerName = req.body.sellerName;
+  const sellerPhone = req.body.sellerPhone;
   const car = new Car({
     title: title,
     imageUrls: imageUrls,
@@ -131,26 +152,18 @@ exports.createCar = (req, res, next) => {
     isFirmOnPrice: isFirmOnPrice,
     location: location,
     sellerType: sellerType,
-    creator: req.userId
+    sellerName: sellerName,
+    sellerPhone: sellerPhone,
   });
   car
     .save()
-    .then(result => {
-      return User.findById(req.userId);
-    })
-    .then(user => {
-      creator = user;
-      user.cars.push(car);
-      return user.save();
-    })
-    .then(result => {
+    .then((result) => {
       res.status(201).json({
         message: 'Car created successfully',
         car: car,
-        creator: { _id: creator._id, name: creator.name }
       });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -194,21 +207,18 @@ exports.updateCar = (req, res, next) => {
   const isFirmOnPrice = req.body.isFirmOnPrice;
   const location = req.body.location;
   const sellerType = req.body.sellerType;
+  const sellerName = req.body.sellerName;
+  const sellerPhone = req.body.sellerPhone;
   if (imageUrls.length <= 0) {
     const error = new Error('You have to select at least 1 image.');
     error.statusCode = 422;
     throw error;
   }
   Car.findById(carId)
-    .then(car => {
+    .then((car) => {
       if (!car) {
         const error = new Error('Could not find car');
         error.statusCode = 404;
-        throw error;
-      }
-      if (car.creator.toString() !== req.userId) {
-        const error = new Error('Not Authorized');
-        error.statusCode = 403;
         throw error;
       }
       if (imageUrls.length >= car.imageUrls.length) {
@@ -245,14 +255,16 @@ exports.updateCar = (req, res, next) => {
       car.isFirmOnPrice = isFirmOnPrice;
       car.location = location;
       car.sellerType = sellerType;
+      car.sellerName = sellerName;
+      car.sellerPhone = sellerPhone;
       return car.save();
     })
-    .then(result => {
+    .then((result) => {
       res
         .status(200)
         .json({ message: 'Car updated successfully!', car: result });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -266,15 +278,10 @@ exports.updateCar = (req, res, next) => {
 exports.deleteCar = (req, res, next) => {
   const carId = req.params.carId;
   Car.findById(carId)
-    .then(car => {
+    .then((car) => {
       if (!car) {
         const error = new Error('Could not find car');
         error.statusCode = 404;
-        throw error;
-      }
-      if (car.creator.toString() !== req.userId) {
-        const error = new Error('Not Authorized');
-        error.statusCode = 403;
         throw error;
       }
       for (let imgUrl of car.imageUrls) {
@@ -282,17 +289,10 @@ exports.deleteCar = (req, res, next) => {
       }
       return Car.findByIdAndRemove(carId);
     })
-    .then(result => {
-      return User.findById(req.userId);
-    })
-    .then(user => {
-      user.cars.pull(carId);
-      return user.save();
-    })
-    .then(result => {
+    .then((result) => {
       res.status(200).json({ message: 'Car Deleted' });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -300,7 +300,7 @@ exports.deleteCar = (req, res, next) => {
     });
 };
 
-const clearImage = filePath => {
+const clearImage = (filePath) => {
   console.log(filePath);
   // console.log(path.join(__dirname, '..', filePath));
   // fs.unlink(filePath, err => console.log(err));

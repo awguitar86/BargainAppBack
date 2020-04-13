@@ -7,93 +7,96 @@ const carSchema = new Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     imageUrls: {
       type: [String],
-      required: true
+      required: true,
     },
     description: {
       type: String,
-      required: true
+      required: true,
     },
     year: {
       type: Number,
-      required: true
+      required: true,
     },
     make: {
       type: String,
-      required: true
+      required: true,
     },
     model: {
       type: String,
-      required: true
+      required: true,
     },
     bodyType: {
       type: String,
-      required: true
+      required: true,
     },
     mileage: {
       type: Number,
-      required: true
+      required: true,
     },
     vin: {
       type: String,
-      required: true
+      required: true,
     },
     titleType: {
       type: String,
-      required: true
+      required: true,
     },
     color: {
       type: String,
-      required: false
+      required: false,
     },
     transmission: {
       type: String,
-      required: false
+      required: false,
     },
     cylinders: {
       type: Number,
-      required: false
+      required: false,
     },
     fuelType: {
       type: String,
-      required: false
+      required: false,
     },
     doorCount: {
       type: Number,
-      required: false
+      required: false,
     },
     condition: {
       type: String,
-      required: false
+      required: false,
     },
     driveType: {
       type: String,
-      required: false
+      required: false,
     },
     price: {
       type: Number,
-      required: true
+      required: true,
     },
     isFirmOnPrice: {
       type: Boolean,
-      required: true
+      required: true,
     },
     location: {
       type: String,
-      required: true
+      required: true,
     },
     sellerType: {
       type: String,
-      required: true
+      required: true,
     },
-    creator: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    }
+    sellerName: {
+      type: String,
+      required: true,
+    },
+    sellerPhone: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

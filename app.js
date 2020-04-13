@@ -1,72 +1,75 @@
-require("dotenv").config();
-const path = require('path')
-const express = require('express')
-const bodyParser = require('body-parser')
-const mongoose = require ('mongoose')
-const mongoUsername = process.env.MONGO_USERNAME
-const mongoPassword = process.env.MONGO_PASSWORD
-const mongoHostname = process.env.MONGO_HOSTNAME
-const mongoDB = process.env.MONGO_DB
-const cors = require('cors')
-const multer = require('multer')
-const port = process.env.PORT || 8080
+require('dotenv').config();
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const mongoUsername = process.env.MONGO_USERNAME;
+const mongoPassword = process.env.MONGO_PASSWORD;
+const mongoHostname = process.env.MONGO_HOSTNAME;
+const mongoDB = process.env.MONGO_DB;
+const cors = require('cors');
+const multer = require('multer');
+const port = process.env.PORT || 8080;
 
-const itemRoutes = require('./routes/item')
-const carRoutes = require('./routes/car')
-const authRoutes = require('./routes/auth')
+const carRoutes = require('./routes/car');
 
-const app = express()
+const app = express();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'images')
+    cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`)
-  }
-})
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
 
 const fileFilter = (req, file, cb) => {
-  if(
+  if (
     file.mimetype === 'image/png' ||
     file.mimetype === 'image.jpg' ||
     file.mimetype === 'image/jpeg'
   ) {
-    cb(null, true)
+    cb(null, true);
   } else {
-    cb(null, false)
+    cb(null, false);
   }
-}
+};
 
-app.use(bodyParser.json())
-app.use(multer({
-  storage: fileStorage,
-  fileFilter: fileFilter})
-  .array('images', 5))
-app.use('/images', express.static(path.join(__dirname, 'images')))
+app.use(bodyParser.json());
+app.use(
+  multer({
+    storage: fileStorage,
+    fileFilter: fileFilter,
+  }).array('images', 5)
+);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use(cors())
+app.use(cors());
 
-app.use('/items', itemRoutes)
-app.use('/cars', carRoutes)
-app.use('/auth', authRoutes)
+app.use('/cars', carRoutes);
 
 app.use((err, req, res, next) => {
-  console.log(err)
-  const status = err.statusCode || 500
-  const message = err.message
-  const data = err.data
-  res.status(status).json({message: message, data: data})
-})
+  console.log(err);
+  const status = err.statusCode || 500;
+  const message = err.message;
+  const data = err.data;
+  res.status(status).json({ message: message, data: data });
+});
 
 mongoose
   .connect(
     `mongodb+srv://${mongoUsername}:${mongoPassword}@${mongoHostname}/${mongoDB}?retryWrites=true&w=majority`,
     {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+    }
+  )
+  .then((result) => {
+    app.listen(port, () =>
+      console.log(
+        `================================\nServer is listening on port ${port}\n================================`
+      )
+    );
   })
-  .then(result => {
-    app.listen(port, () => console.log(`================================\nServer is listening on port ${port}\n================================`))
-  })
-  .catch(err => console.log(err))
+  .catch((err) => console.log(err));
