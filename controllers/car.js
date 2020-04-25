@@ -107,7 +107,6 @@ exports.createCar = (req, res, next) => {
   for (let img of req.files) {
     imgUrls.push(img.path);
   }
-  const title = req.body.title;
   const imageUrls = imgUrls;
   const description = req.body.description;
   const year = req.body.year;
@@ -131,7 +130,6 @@ exports.createCar = (req, res, next) => {
   const sellerName = req.body.sellerName;
   const sellerPhone = req.body.sellerPhone;
   const car = new Car({
-    title: title,
     imageUrls: imageUrls,
     description: description,
     year: year,
@@ -186,7 +184,6 @@ exports.updateCar = (req, res, next) => {
   for (let img of req.files) {
     imgUrls.push(img.path);
   }
-  const title = req.body.title;
   const imageUrls = imgUrls;
   const description = req.body.description;
   const year = req.body.year;
@@ -234,7 +231,6 @@ exports.updateCar = (req, res, next) => {
           }
         }
       }
-      car.title = title;
       car.imageUrls = imageUrls;
       car.description = description;
       car.year = year;

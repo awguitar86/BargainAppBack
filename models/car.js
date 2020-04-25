@@ -5,10 +5,6 @@ const Schema = mongoose.Schema;
 
 const carSchema = new Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
     imageUrls: {
       type: [String],
       required: true,
