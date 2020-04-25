@@ -73,10 +73,6 @@ const carSchema = new Schema(
       type: Number,
       required: true,
     },
-    isFirmOnPrice: {
-      type: Boolean,
-      required: true,
-    },
     location: {
       type: String,
       required: true,
