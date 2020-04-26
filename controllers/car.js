@@ -4,22 +4,11 @@ const { validationResult } = require('express-validator');
 const Car = require('../models/car');
 
 exports.getCars = (req, res, next) => {
-  const currentPage = req.query.currentPage;
-  const perPage = 25;
-  let totalCars;
   Car.find()
-    .countDocuments()
-    .then((count) => {
-      totalCars = count;
-      return Car.find()
-        .skip((currentPage - 1) * perPage)
-        .limit(perPage);
-    })
     .then((cars) => {
       res.status(200).json({
         message: 'Fetched Cars successfully!',
         cars: cars,
-        totalCars: totalCars,
       });
     })
     .catch((err) => {
@@ -92,22 +81,14 @@ exports.getCarByMake = (req, res, next) => {
 // };
 
 exports.createCar = (req, res, next) => {
-  const imgUrls = [];
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed, entered data is incorrect!');
     error.statusCode = 422;
     throw error;
   }
-  if (req.files.length <= 0) {
-    const error = new Error('You must select at least 1 image.');
-    error.statusCode = 422;
-    throw error;
-  }
-  for (let img of req.files) {
-    imgUrls.push(img.path);
-  }
-  const imageUrls = imgUrls;
+  console.log(req.body);
+  const imageUrl = req.body.imageUrl;
   const description = req.body.description;
   const year = req.body.year;
   const make = req.body.make;
@@ -129,7 +110,7 @@ exports.createCar = (req, res, next) => {
   const sellerName = req.body.sellerName;
   const sellerPhone = req.body.sellerPhone;
   const car = new Car({
-    imageUrls: imageUrls,
+    imageUrl: imageUrl,
     description: description,
     year: year,
     make: make,
@@ -171,7 +152,6 @@ exports.createCar = (req, res, next) => {
 };
 
 exports.updateCar = (req, res, next) => {
-  const imgUrls = [];
   const carId = req.params.carId;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -179,10 +159,7 @@ exports.updateCar = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  for (let img of req.files) {
-    imgUrls.push(img.path);
-  }
-  const imageUrls = imgUrls;
+  const imageUrl = req.body.imageUrl;
   const description = req.body.description;
   const year = req.body.year;
   const make = req.body.make;
@@ -203,11 +180,6 @@ exports.updateCar = (req, res, next) => {
   const sellerType = req.body.sellerType;
   const sellerName = req.body.sellerName;
   const sellerPhone = req.body.sellerPhone;
-  if (imageUrls.length <= 0) {
-    const error = new Error('You have to select at least 1 image.');
-    error.statusCode = 422;
-    throw error;
-  }
   Car.findById(carId)
     .then((car) => {
       if (!car) {
@@ -215,20 +187,20 @@ exports.updateCar = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      if (imageUrls.length >= car.imageUrls.length) {
-        for (let i = 0; i < imageUrls.length; i++) {
-          if (imageUrls[i] !== car.imageUrls[i]) {
-            clearImage(car.imageUrls[i]);
-          }
-        }
-      } else {
-        for (let i = 0; i < car.imageUrls.length; i++) {
-          if (car.imageUrls[i] !== imageUrls[i]) {
-            clearImage(imageUrls[i]);
-          }
-        }
-      }
-      car.imageUrls = imageUrls;
+      // if (imageUrls.length >= car.imageUrls.length) {
+      //   for (let i = 0; i < imageUrls.length; i++) {
+      //     if (imageUrls[i] !== car.imageUrls[i]) {
+      //       clearImage(car.imageUrls[i]);
+      //     }
+      //   }
+      // } else {
+      //   for (let i = 0; i < car.imageUrls.length; i++) {
+      //     if (car.imageUrls[i] !== imageUrls[i]) {
+      //       clearImage(imageUrls[i]);
+      //     }
+      //   }
+      // }
+      car.imageUrl = imageUrl;
       car.description = description;
       car.year = year;
       car.make = make;

@@ -41,13 +41,20 @@ app.use(
   multer({
     storage: fileStorage,
     fileFilter: fileFilter,
-  }).array('images', 5)
+  }).single('image')
 );
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use(cors());
 
 app.use('/cars', carRoutes);
+app.use('/image', (req, res, next) => {
+  if (!req.file) {
+    return res.status(200).json({ message: 'No file provided!' });
+  }
+  console.log(req.file.path);
+  return res.send(req.file.path);
+});
 
 app.use((err, req, res, next) => {
   console.log(err);

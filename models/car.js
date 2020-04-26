@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 
 const carSchema = new Schema(
   {
-    imageUrls: {
-      type: [String],
+    imageUrl: {
+      type: String,
       required: true,
     },
     description: {
