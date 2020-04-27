@@ -248,13 +248,12 @@ exports.deleteCar = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      for (let imgUrl of car.imageUrls) {
-        clearImage(imgUrl);
-      }
-      return Car.findByIdAndRemove(carId);
+      console.log(car);
+      clearImage(car.imageUrl);
+      return Car.findByIdAndDelete(carId);
     })
     .then((result) => {
-      res.status(200).json({ message: 'Car Deleted' });
+      res.status(200).json({ message: 'Car Deleted', result });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -266,6 +265,6 @@ exports.deleteCar = (req, res, next) => {
 
 const clearImage = (filePath) => {
   console.log(filePath);
-  // console.log(path.join(__dirname, '..', filePath));
-  // fs.unlink(filePath, err => console.log(err));
+  filePath = path.join(__dirname, '..', filePath);
+  fs.unlink(filePath, (err) => console.log(err));
 };
