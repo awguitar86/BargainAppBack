@@ -8,7 +8,7 @@ router.get('/', carController.getCars);
 
 router.get('/:carId', carController.getCarById);
 
-router.get('/:carMake', carController.getCarByMake);
+router.get('/make/:carMake', carController.getCarByMake);
 
 router.post('/', carController.createCar);
 
